@@ -116,7 +116,7 @@ uidgen.generate((err, uid) => {
 const uidgen = new UIDGenerator();
 uidgen.generate()
   .then(uid => {
-  	// Use uid here
+    // Use uid here
   })
   .catch(err => { throw err; });
 ```
