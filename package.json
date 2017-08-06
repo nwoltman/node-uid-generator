@@ -9,9 +9,6 @@
   "engines": {
     "node": ">=4"
   },
-  "scripts": {
-    "test": "grunt"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nwoltman/node-uid-generator.git"
@@ -35,13 +32,14 @@
   "homepage": "https://github.com/nwoltman/node-uid-generator",
   "devDependencies": {
     "coveralls": "^2.11.15",
-    "grunt": "^1.0.1",
-    "grunt-eslint": "^19.0.0",
-    "grunt-mocha-istanbul": "^5.0.2",
-    "grunt-mocha-test": "^0.13.2",
-    "istanbul": "^0.4.5",
-    "jit-grunt": "^0.10.0",
+    "eslint": "^4.4.0",
     "mocha": "^3.1.2",
+    "nyc": "^11.1.0",
     "should": "^11.1.1"
+  },
+  "scripts": {
+    "lint": "eslint index.js test/*.js",
+    "test": "eslint index.js test/*.js && nyc --reporter=html --reporter=text-summary mocha",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   }
 }
