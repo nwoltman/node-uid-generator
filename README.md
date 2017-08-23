@@ -21,24 +21,24 @@ npm install uid-generator --save
 
 ```js
 const UIDGenerator = require('uid-generator');
+const uidgen = new UIDGenerator(); // Default is a 128-bit UID encoded in base58
+
+// Async with `await`
+await uidgen.generate(); // -> 'B1q2hUEKmeVp9zWepx9cnp'
+
+// Async with promise
+uidgen.generate()
+  .then(uid => console.log(uid)) // -> 'PXmRJVrtzFAHsxjs7voD5R'
+  .catch(err => { throw err; });
 
 // Async with callback
-const uidgen = new UIDGenerator(); // Default is a 128-bit UID encoded in base58
 uidgen.generate((err, uid) => {
   if (err) throw err;
   console.log(uid); // -> '4QhmRwHwwrgFqXULXNtx4d'
 });
 
-// Async with promise
-const uidgen2 = new UIDGenerator(null, 10);
-uidgen2.generate()
-  .then(uid => console.log(uid)) // -> 'N13n1cjVP2'
-  .catch(err => { throw err; });
-
 // Sync
-const uidgen3 = new UIDGenerator(256, UIDGenerator.BASE62);
-uidgen3.generateSync();
-// -> 'x6GCX3aq9hIT8gjhvO96ObYj0W5HBVTsj64eqCuVc5X'
+uidgen.generateSync(); // -> '8Vw3bgbMMzeYfrQHQ8p3Jr'
 ```
 
 
@@ -102,14 +102,11 @@ Asynchronously generates a UID.
 
 **Returns**: `?Promise` - A promise that will resolve with the UID or reject with an error. Returns nothing if the `cb` parameter is specified.
 
-**Callback Example**
+**`async`/`await` Example**
 
 ```js
 const uidgen = new UIDGenerator();
-uidgen.generate((err, uid) => {
-  if (err) throw err;
-  // Use uid here
-});
+const uid = await uidgen.generate(); // This must be inside an async function
 ```
 
 **Promise Example**
@@ -121,6 +118,16 @@ uidgen.generate()
     // Use uid here
   })
   .catch(err => { throw err; });
+```
+
+**Callback Example**
+
+```js
+const uidgen = new UIDGenerator();
+uidgen.generate((err, uid) => {
+  if (err) throw err;
+  // Use uid here
+});
 ```
 
 ---
