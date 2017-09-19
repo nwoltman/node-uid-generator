@@ -253,7 +253,17 @@ describe('UIDGenerator', () => {
         return buffer = randomBytes(size);
       };
 
-      new UIDGenerator(UIDGenerator.BASE16).generateSync().should.be.exactly(buffer.toString('hex'));
+      new UIDGenerator(UIDGenerator.BASE16).generateSync()
+        .should.equal(buffer.toString('hex'));
+
+      // Test to ensure that the digits.length > this.uidLength path is hit
+      crypto.randomBytes = function(size) {
+        const buf = Buffer.allocUnsafe(size);
+        buf[0] = 3;
+        return buf;
+      };
+
+      new UIDGenerator('01', 1).generateSync().should.equal('1');
 
       // Restore crypto.randomBytes
       crypto.randomBytes = randomBytes;
