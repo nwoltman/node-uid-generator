@@ -13,7 +13,11 @@ Great for generating things like API keys and UIDs that are safe to use in URLs 
 ## Installation
 
 ```sh
+# npm
 npm install uid-generator --save
+
+# yarn
+yarn add uid-generator
 ```
 
 
