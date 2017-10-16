@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/nwoltman/node-uid-generator/badge.svg?branch=master)](https://coveralls.io/github/nwoltman/node-uid-generator?branch=master)
 [![devDependency Status](https://david-dm.org/nwoltman/node-uid-generator/dev-status.svg)](https://david-dm.org/nwoltman/node-uid-generator?type=dev)
 
-Generates cryptographically strong pseudo-random UIDs with custom size and base-encoding. Generated UIDs are strings that are guaranteed to always be the same length depending on the specified [bit-size](#api). You may also specify the length of the UID to generate instead of specifying the bit-size.
+Generates cryptographically strong, pseudo-random UIDs with custom size and base-encoding. Generated UIDs are strings that are guaranteed to always be the same length depending on the specified [bit-size](#api). You may also specify the length of the UID to generate instead of specifying the number of bits.
 
 Great for generating things like API keys and UIDs that are safe to use in URLs and cookies.
 
@@ -28,8 +28,7 @@ await uidgen.generate(); // -> 'B1q2hUEKmeVp9zWepx9cnp'
 
 // Async with promise
 uidgen.generate()
-  .then(uid => console.log(uid)) // -> 'PXmRJVrtzFAHsxjs7voD5R'
-  .catch(err => { throw err; });
+  .then(uid => console.log(uid)); // -> 'PXmRJVrtzFAHsxjs7voD5R'
 
 // Async with callback
 uidgen.generate((err, uid) => {
@@ -45,11 +44,12 @@ uidgen.generateSync(); // -> '8Vw3bgbMMzeYfrQHQ8p3Jr'
 ## API
 
 ### new UIDGenerator([bitSize][, baseEncoding][, uidLength])
-Creates a new UIDGenerator instance that generates `bitSize`-bit or `uidLength`-sized UIDs encoded using the characters in `baseEncoding`.
+
+Creates a new `UIDGenerator` instance that generates `bitSize`-bit or `uidLength`-sized UIDs encoded using the characters in `baseEncoding`.
 
 | Param | Default | Type | Description |
 |-------|---------|------|-------------|
-| [bitSize] | `128` | number | The size of the UID to generate in bits. Must be a multiple of 8. |
+| [bitSize] | `128` | number | The size of the UID to generate in bits. Must be a multiple of `8`. |
 | [baseEncoding] | `UIDGenerator.BASE58` | string | One of the `UIDGenerator.BASE##` constants or a custom string of characters to use to encode the UID. |
 | [uidLength] | `null` | number | The length of the UID string to generate. An error is thrown if `uidLength` is specified and `bitSize` is specified and not `null`. |
 
@@ -93,37 +93,40 @@ new UIDGenerator('01'); // Custom encoding (base2)
 
 ---
 
-### uidgen.generate([cb]) ⇒ `?Promise`
+### uidgen.generate([cb]) ⇒ `?Promise<string>`
+  
 Asynchronously generates a UID.
 
 | Param | Type | Description |
 |-------|------|-------------|
 | [cb] | `?function(error, uid)` | An optional callback that will be called with the results of generating the UID.<br>If not specified, the function will return a promise. |
 
-**Returns**: `?Promise` - A promise that will resolve with the UID or reject with an error. Returns nothing if the `cb` parameter is specified.
+**Returns**: `?Promise<string>` - A promise that will resolve with the UID or reject with an error. Returns nothing if the `cb` parameter is specified.
 
 **`async`/`await` Example**
 
 ```js
 const uidgen = new UIDGenerator();
-const uid = await uidgen.generate(); // This must be inside an async function
+// This must be inside an async function
+const uid = await uidgen.generate();
 ```
 
 **Promise Example**
 
 ```js
 const uidgen = new UIDGenerator();
+
 uidgen.generate()
   .then(uid => {
     // Use uid here
-  })
-  .catch(err => { throw err; });
+  });
 ```
 
 **Callback Example**
 
 ```js
 const uidgen = new UIDGenerator();
+
 uidgen.generate((err, uid) => {
   if (err) throw err;
   // Use uid here
@@ -133,6 +136,7 @@ uidgen.generate((err, uid) => {
 ---
 
 ### uidgen.generateSync() ⇒ `string`
+
 Synchronously generates a UID.
 
 **Returns**: `string` - The generated UID.
@@ -147,6 +151,7 @@ const uid = uidgen.generateSync();
 ---
 
 ### (readonly) uidgen.bitSize : `number`
+
 The size of the UID that will be generated in bits (the `bitSize` value passed to the `UIDGenerator` constructor).
 If the `uidLength` parameter is passed to the constructor instead of `bitSize`, `bitSize` is calculated as follows:
 
@@ -164,6 +169,7 @@ new UIDGenerator(null, 11).bitSize // -> 64
 ```
 
 ### (readonly) uidgen.uidLength : `number`
+
 The length of the UID string that will be generated. The generated UID will always be this length.
 This will be the same as the `uidLength` parameter passed to the `UIDGenerator` constructor.
 If the `uidLength` parameter is not passed to the constructor, it will be calculated using the `bitSize` parameter as follows:
@@ -181,6 +187,7 @@ new UIDGenerator(256, UIDGenerator.BASE62).uidLength // -> 43
 ```
 
 ### (readonly) uidgen.baseEncoding : `string`
+
 The set of characters used to encode the UID string (the `baseEncoding` value passed to the `UIDGenerator` constructor).
 
 **Example**
@@ -192,6 +199,7 @@ new UIDGenerator('01').baseEncoding // -> '01'
 ```
 
 ### (readonly) uidgen.base : `number`
+
 The base of the UID that will be generated (which is the number of characters in the `baseEncoding`).
 
 **Example**
