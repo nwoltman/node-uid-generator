@@ -13,10 +13,10 @@ class UIDGenerator {
       baseEncoding = null;
     }
 
-    baseEncoding = baseEncoding || UIDGenerator.BASE58;
-
-    if (typeof baseEncoding !== 'string') {
-      throw new TypeError('baseEncoding must be a string');
+    if (baseEncoding) {
+      validateBaseEncoding(baseEncoding);
+    } else {
+      baseEncoding = UIDGenerator.BASE58;
     }
 
     if (uidLength == null) {
@@ -102,6 +102,7 @@ class UIDGenerator {
       i = this.uidLength;
     } else {
       i = digits.length;
+
       if (digits.length < this.uidLength) { // Handle leading zeros
         str += this.baseEncoding[0].repeat(this.uidLength - digits.length);
       }
@@ -112,6 +113,30 @@ class UIDGenerator {
     }
 
     return str;
+  }
+}
+
+function validateBaseEncoding(baseEncoding) {
+  if (typeof baseEncoding !== 'string') {
+    throw new TypeError('baseEncoding must be a string');
+  }
+
+  switch (baseEncoding) {
+    case UIDGenerator.BASE16:
+    case UIDGenerator.BASE36:
+    case UIDGenerator.BASE58:
+    case UIDGenerator.BASE62:
+    case UIDGenerator.BASE66:
+    case UIDGenerator.BASE71:
+      return;
+  }
+
+  for (var i = 0; i < baseEncoding.length - 1; i++) {
+    if (baseEncoding.indexOf(baseEncoding[i], i + 1) >= 0) {
+      throw new Error(
+        `Invalid baseEncoding due to duplicated character: '${baseEncoding[i]}'`
+      );
+    }
   }
 }
 

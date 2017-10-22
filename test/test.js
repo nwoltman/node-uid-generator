@@ -88,6 +88,15 @@ describe('UIDGenerator', () => {
       should.throws(() => new UIDGenerator(128, new Date()), TypeError);
     });
 
+    it('throws if baseEncoding contains non-unique characters', () => {
+      should.throws(() => new UIDGenerator('11'), Error);
+      should.throws(() => new UIDGenerator('011'), Error);
+      should.throws(() => new UIDGenerator('110'), Error);
+      should.throws(() => new UIDGenerator('101'), Error);
+      should.throws(() => new UIDGenerator('0121'), Error);
+      should.throws(() => new UIDGenerator('01213'), Error);
+    });
+
     it('throws if uidLength is not a positive integer', () => {
       should.throws(() => new UIDGenerator('01', 0), TypeError);
       should.throws(() => new UIDGenerator('01', -1), TypeError);
