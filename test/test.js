@@ -11,6 +11,7 @@ describe('UIDGenerator', () => {
 
     it('accepts 0 parameters', () => {
       const uidgen = new UIDGenerator();
+
       uidgen.should.be.an.instanceOf(UIDGenerator);
       uidgen.bitSize.should.be.exactly(128);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE58);
@@ -20,6 +21,7 @@ describe('UIDGenerator', () => {
 
     it('accepts just the bitSize parameter', () => {
       const uidgen = new UIDGenerator(256);
+
       uidgen.bitSize.should.be.exactly(256);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE58);
       uidgen.uidLength.should.be.exactly(44);
@@ -28,6 +30,7 @@ describe('UIDGenerator', () => {
 
     it('accepts just the baseEncoding parameter', () => {
       const uidgen = new UIDGenerator(UIDGenerator.BASE16);
+
       uidgen.bitSize.should.be.exactly(128);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE16);
       uidgen.uidLength.should.be.exactly(32);
@@ -36,6 +39,7 @@ describe('UIDGenerator', () => {
 
     it('accepts just the uidLength parameter', () => {
       const uidgen = new UIDGenerator(null, 10);
+
       uidgen.bitSize.should.be.exactly(59);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE58);
       uidgen.uidLength.should.be.exactly(10);
@@ -44,6 +48,7 @@ describe('UIDGenerator', () => {
 
     it('accepts the bitSize and baseEncoding parameters', () => {
       const uidgen = new UIDGenerator(512, UIDGenerator.BASE62);
+
       uidgen.bitSize.should.be.exactly(512);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE62);
       uidgen.uidLength.should.be.exactly(86);
@@ -179,13 +184,11 @@ describe('UIDGenerator', () => {
       });
     });
 
-    it('generates UIDs asynchronously with a promise', (done) => {
-      new UIDGenerator().generate()
+    it('generates UIDs asynchronously with a promise', () => {
+      return new UIDGenerator().generate()
         .then((uid) => {
           uid.should.have.type('string');
-          done();
-        })
-        .catch(done);
+        });
     });
 
     it('generates UIDs synchronously', () => {
@@ -229,6 +232,7 @@ describe('UIDGenerator', () => {
       crypto.randomBytes = function(size) {
         return Buffer.alloc(size, 1);
       };
+
       let uidgen = new UIDGenerator(256);
       let uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
@@ -236,6 +240,7 @@ describe('UIDGenerator', () => {
       crypto.randomBytes = function(size) {
         return Buffer.alloc(size);
       };
+
       uidgen = new UIDGenerator();
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
@@ -249,6 +254,7 @@ describe('UIDGenerator', () => {
         buffer[size - 1] = 255;
         return buffer;
       };
+
       uidgen = new UIDGenerator(null, 20);
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
@@ -257,7 +263,7 @@ describe('UIDGenerator', () => {
       crypto.randomBytes = randomBytes;
     });
 
-    it('base-encodes UIDs in a standard fasion', () => {
+    it('base-encodes UIDs in a standard fashion', () => {
       const randomBytes = crypto.randomBytes;
       let buffer;
 
