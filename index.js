@@ -19,8 +19,8 @@ class UIDGenerator {
       baseEncoding = UIDGenerator.BASE58;
     }
 
-    if (uidLength == null) {
-      if (bitSize == null) {
+    if (uidLength === undefined || uidLength === null) {
+      if (bitSize === undefined || bitSize === null) {
         bitSize = 128;
       } else if (!Number.isInteger(bitSize) || bitSize <= 0 || bitSize % 8 !== 0) {
         throw new TypeError('bitSize must be a positive integer that is a multiple of 8');
@@ -29,7 +29,7 @@ class UIDGenerator {
       uidLength = Math.ceil(bitSize / Math.log2(baseEncoding.length));
       this._byteSize = bitSize / 8;
     } else {
-      if (bitSize != null) {
+      if (bitSize !== undefined && bitSize !== null) {
         throw new TypeError('uidLength may not be specified when bitSize is also specified');
       }
       if (!Number.isInteger(uidLength) || uidLength <= 0) {
