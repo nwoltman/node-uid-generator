@@ -52,10 +52,14 @@ describe('UIDGenerator', () => {
 
     it('accepts the baseEncoding and uidLength parameters', () => {
       const uidgen = new UIDGenerator(UIDGenerator.BASE62, 22);
+
       uidgen.bitSize.should.be.exactly(131);
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE62);
       uidgen.uidLength.should.be.exactly(22);
       uidgen.base.should.be.exactly(62);
+
+      new UIDGenerator(null, UIDGenerator.BASE62, 22).should.deepEqual(uidgen);
+      new UIDGenerator(undefined, UIDGenerator.BASE62, 22).should.deepEqual(uidgen);
     });
 
     it('accepts a custom baseEncoding', () => {

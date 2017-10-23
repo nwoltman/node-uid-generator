@@ -51,11 +51,11 @@ uidgen.generateSync(); // -> '8Vw3bgbMMzeYfrQHQ8p3Jr'
 
 Creates a new `UIDGenerator` instance that generates `bitSize`-bit or `uidLength`-sized UIDs encoded using the characters in `baseEncoding`.
 
-| Param | Default | Type | Description |
-|-------|---------|------|-------------|
-| [bitSize] | `128` | number | The size of the UID to generate in bits. Must be a multiple of `8`. |
-| [baseEncoding] | `UIDGenerator.BASE58` | string | One of the `UIDGenerator.BASE##` constants or a custom string of characters to use to encode the UID. If a custom string is used, it must made of unique characters. |
-| [uidLength] | `null` | number | The length of the UID string to generate. An error is thrown if `uidLength` is specified and `bitSize` is specified and not `null`. |
+| Param          | Type               | Default               | Description
+|----------------|--------------------|-----------------------|-------------
+| [bitSize]      | `number` \| `null` | `128`                 | The size of the UID to generate in bits. Must be a multiple of `8`.
+| [baseEncoding] | `string`           | `UIDGenerator.BASE58` | One of the `UIDGenerator.BASE##` constants or a custom string of characters to use to encode the UID. If a custom string is used, it must made of unique characters.
+| [uidLength]    | `number`           | `undefined`           | The length of the UID string to generate. An error is thrown if `uidLength` is specified and `bitSize` is specified and not `null`.
 
 **Note:** If you use a custom `baseEncoding` that has URL-unsafe characters, it is up to you to URL-encode the resulting UID.
 
