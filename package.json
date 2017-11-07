@@ -1,6 +1,6 @@
 {
   "name": "uid-generator",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Generates cryptographically strong pseudo-random UIDs with custom size and base-encoding",
   "main": "index.js",
   "files": [
