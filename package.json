@@ -31,10 +31,10 @@
   },
   "homepage": "https://github.com/nwoltman/node-uid-generator",
   "devDependencies": {
-    "coveralls": "^3.0.2",
-    "eslint": "^5.8.0",
-    "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "coveralls": "^3.0.3",
+    "eslint": "^5.16.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
     "should": "^13.2.3"
   },
   "scripts": {
