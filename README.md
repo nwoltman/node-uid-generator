@@ -7,7 +7,9 @@
 
 Generates cryptographically strong, pseudo-random UIDs with custom size and base-encoding. Generated UIDs are strings that are guaranteed to always be the same length depending on the specified [bit-size](#api). You may also specify the length of the UID to generate instead of specifying the number of bits.
 
-Great for generating things like API keys and UIDs that are safe to use in URLs and cookies.
+Great for generating things like compact API keys and UIDs that are safe to use in URLs and cookies.
+
+**Tip:** The main benefit of this module is the ability to generate human-safe UIDs (using [base58](#uidgeneratorbase58--string)) and large UIDs that are more compact (using something like [base94](#uidgeneratorbase94--string)). If you’re just looking to generate URL-safe base64 IDs, the best package for that is [`uid-safe`](https://github.com/crypto-utils/uid-safe).
 
 
 ## Installation
@@ -73,32 +75,8 @@ new UIDGenerator('01'); // Custom encoding (base2)
 
 ---
 
-### UIDGenerator.BASE16 : `string`
-`0123456789abcdef`
-
-### UIDGenerator.BASE36 : `string`
-`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ`
-
-### UIDGenerator.BASE58 : `string`
-`123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz`
-
-### UIDGenerator.BASE62 : `string`
-`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
-
-### UIDGenerator.BASE66 : `string`
-`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._~`
-
-(all ASCII characters that do not need to be encoded in a URI as specified by [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2.3))
-
-### UIDGenerator.BASE71 : `string`
-`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!'()*-._~`
-
-(all ASCII characters that are not encoded by `encodeURIComponent()`)
-
----
-
 ### uidgen.generate([cb]) ⇒ `?Promise<string>`
-  
+
 Asynchronously generates a UID.
 
 | Param | Type | Description |
@@ -172,6 +150,8 @@ new UIDGenerator(null, 10).bitSize // -> 58
 new UIDGenerator(null, 11).bitSize // -> 64
 ```
 
+---
+
 ### (readonly) uidgen.uidLength : `number`
 
 The length of the UID string that will be generated. The generated UID will always be this length.
@@ -190,6 +170,8 @@ new UIDGenerator(null, 10).uidLength // -> 10
 new UIDGenerator(256, UIDGenerator.BASE62).uidLength // -> 43
 ```
 
+---
+
 ### (readonly) uidgen.baseEncoding : `string`
 
 The set of characters used to encode the UID string (the `baseEncoding` value passed to the `UIDGenerator` constructor).
@@ -202,6 +184,8 @@ new UIDGenerator(UIDGenerator.BASE16).baseEncoding // -> '0123456789abcdef'
 new UIDGenerator('01').baseEncoding // -> '01'
 ```
 
+---
+
 ### (readonly) uidgen.base : `number`
 
 The base of the UID that will be generated (which is the number of characters in the `baseEncoding`).
@@ -213,3 +197,38 @@ new UIDGenerator().base // -> 58
 new UIDGenerator(UIDGenerator.BASE16).base // -> 16
 new UIDGenerator('01').base // -> 2
 ```
+
+---
+
+### UIDGenerator.BASE16 : `string`
+`0123456789abcdef`
+
+### UIDGenerator.BASE36 : `string`
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+### UIDGenerator.BASE58 : `string`
+`123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz`
+
+(all alphanumeric characters except for `0`, `O`, `I`, and `l` — characters easily mistaken for each other)
+
+The default base.
+
+**Tip:** Use this base to create UIDs that are easy to type in manually.
+
+### UIDGenerator.BASE62 : `string`
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
+
+### UIDGenerator.BASE66 : `string`
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._~`
+
+(all ASCII characters that do not need to be encoded in a URI as specified by [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2.3))
+
+### UIDGenerator.BASE71 : `string`
+`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!'()*-._~`
+
+(all ASCII characters that are not encoded by `encodeURIComponent()`)
+
+### UIDGenerator.BASE94 : `string`
+``!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~``
+
+(all readable ASCII characters)
