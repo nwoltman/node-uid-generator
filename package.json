@@ -31,7 +31,8 @@
   },
   "homepage": "https://github.com/nwoltman/node-uid-generator",
   "devDependencies": {
-    "coveralls": "^3.0.3",
+    "@nwoltman/eslint-config": "~0.2.1",
+    "coveralls": "^3.0.4",
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",

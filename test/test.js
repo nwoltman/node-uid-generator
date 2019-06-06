@@ -186,7 +186,7 @@ describe('UIDGenerator', () => {
 
     it('produces UIDs of the correct length even if crypto.randomBytes() returns a Buffer with leading zeros', () => {
       // Mock crypto.randomBytes
-      const randomBytes = crypto.randomBytes;
+      const {randomBytes} = crypto;
       crypto.randomBytes = function(size) {
         return Buffer.alloc(size, 1);
       };
@@ -220,9 +220,10 @@ describe('UIDGenerator', () => {
       let buffer;
 
       // Mock crypto.randomBytes
-      const randomBytes = crypto.randomBytes;
+      const {randomBytes} = crypto;
       crypto.randomBytes = function(size) {
-        return buffer = randomBytes(size);
+        buffer = randomBytes(size);
+        return buffer;
       };
 
       new UIDGenerator(UIDGenerator.BASE16).generateSync()
@@ -238,7 +239,7 @@ describe('UIDGenerator', () => {
       const error = new Error('Fake error');
 
       // Mock crypto.randomBytes
-      const randomBytes = crypto.randomBytes;
+      const {randomBytes} = crypto;
       crypto.randomBytes = function(size, cb) {
         process.nextTick(() => {
           cb(error);
