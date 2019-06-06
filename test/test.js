@@ -158,6 +158,12 @@ describe('UIDGenerator', () => {
         });
     });
 
+    it('generates UIDs asynchronously with async/await', async () => {
+      const uidgen = new UIDGenerator();
+      const uid = await uidgen.generate();
+      uid.should.have.type('string');
+    });
+
     it('generates UIDs synchronously', () => {
       new UIDGenerator().generateSync().should.have.type('string');
     });
@@ -247,16 +253,20 @@ describe('UIDGenerator', () => {
       };
 
       new UIDGenerator().generate()
-        .catch((err) => {
-          err.should.be.exactly(error);
-        })
-        .then(() => {
-          new UIDGenerator().generate((err) => {
+        .then(
+          () => {
+            should.fail('generate() should have thrown');
+          },
+          (err) => {
             err.should.be.exactly(error);
-            crypto.randomBytes = randomBytes; // Restore original
-            done();
-          });
-        });
+
+            new UIDGenerator().generate((err) => {
+              err.should.be.exactly(error);
+              crypto.randomBytes = randomBytes; // Restore original
+              done();
+            });
+          }
+        );
     });
 
   });
