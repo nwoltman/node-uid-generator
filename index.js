@@ -34,7 +34,7 @@ class UIDGenerator {
           if (err) {
             reject(err);
           } else {
-            resolve(this._bufferToString(buffer));
+            resolve(bufferToString(buffer, this.baseEncoding, this.uidLength));
           }
         });
       });
@@ -44,49 +44,51 @@ class UIDGenerator {
       if (err) {
         cb(err);
       } else {
-        cb(null, this._bufferToString(buffer));
+        cb(null, bufferToString(buffer, this.baseEncoding, this.uidLength));
       }
     });
   }
 
   generateSync() {
-    return this._bufferToString(crypto.randomBytes(this._byteSize));
+    const buffer = crypto.randomBytes(this._byteSize);
+    return bufferToString(buffer, this.baseEncoding, this.uidLength);
   }
+}
 
-  // Encoding algorithm based on the encode function in Daniel Cousens' base-x package
-  // https://github.com/cryptocoinjs/base-x/blob/master/index.js
-  _bufferToString(buffer) {
-    const digits = [0];
-    var i;
-    var j;
-    var carry;
+// Encoding algorithm based on the encode function in Daniel Cousens' base-x package
+// https://github.com/cryptocoinjs/base-x/blob/master/index.js
+function bufferToString(buffer, baseEncoding, uidLength) {
+  const base = baseEncoding.length;
+  const digits = [0];
+  var i;
+  var j;
+  var carry;
 
-    for (i = 0; i < buffer.length; ++i) {
-      carry = buffer[i];
+  for (i = 0; i < buffer.length; ++i) {
+    carry = buffer[i];
 
-      for (j = 0; j < digits.length; ++j) {
-        carry += digits[j] << 8;
-        digits[j] = carry % this.base;
-        carry = (carry / this.base) | 0;
-      }
-
-      while (carry > 0) {
-        digits.push(carry % this.base);
-        carry = (carry / this.base) | 0;
-      }
+    for (j = 0; j < digits.length; ++j) {
+      carry += digits[j] << 8;
+      digits[j] = carry % base;
+      carry = (carry / base) | 0;
     }
 
-    // Convert digits to a string
-    var str = digits.length < this.uidLength
-      ? this.baseEncoding[0].repeat(this.uidLength - digits.length) // Handle leading zeros
-      : '';
-
-    for (i = digits.length - 1; i >= 0; --i) {
-      str += this.baseEncoding[digits[i]];
+    while (carry > 0) {
+      digits.push(carry % base);
+      carry = (carry / base) | 0;
     }
-
-    return str;
   }
+
+  // Convert digits to a string
+  var str = digits.length < uidLength
+    ? baseEncoding[0].repeat(uidLength - digits.length) // Handle leading zeros
+    : '';
+
+  for (i = digits.length - 1; i >= 0; --i) {
+    str += baseEncoding[digits[i]];
+  }
+
+  return str;
 }
 
 function validateBaseEncoding(baseEncoding) {
