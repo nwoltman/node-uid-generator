@@ -7,7 +7,7 @@ const should = require('should');
 
 describe('UIDGenerator', () => {
 
-  describe('new UIDGenerator(bitSize, baseEncoding, uidLength)', () => {
+  describe('new UIDGenerator(bitSize, baseEncoding)', () => {
 
     it('accepts 0 parameters', () => {
       const uidgen = new UIDGenerator();
@@ -37,15 +37,6 @@ describe('UIDGenerator', () => {
       uidgen.base.should.be.exactly(16);
     });
 
-    it('accepts just the uidLength parameter', () => {
-      const uidgen = new UIDGenerator(null, 10);
-
-      uidgen.bitSize.should.be.exactly(59);
-      uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE58);
-      uidgen.uidLength.should.be.exactly(10);
-      uidgen.base.should.be.exactly(58);
-    });
-
     it('accepts the bitSize and baseEncoding parameters', () => {
       const uidgen = new UIDGenerator(512, UIDGenerator.BASE62);
 
@@ -53,24 +44,14 @@ describe('UIDGenerator', () => {
       uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE62);
       uidgen.uidLength.should.be.exactly(86);
       uidgen.base.should.be.exactly(62);
-    });
 
-    it('accepts the baseEncoding and uidLength parameters', () => {
-      const uidgen = new UIDGenerator(UIDGenerator.BASE62, 22);
-
-      uidgen.bitSize.should.be.exactly(131);
-      uidgen.baseEncoding.should.be.exactly(UIDGenerator.BASE62);
-      uidgen.uidLength.should.be.exactly(22);
-      uidgen.base.should.be.exactly(62);
-
-      new UIDGenerator(null, UIDGenerator.BASE62, 22).should.deepEqual(uidgen);
-      new UIDGenerator(undefined, UIDGenerator.BASE62, 22).should.deepEqual(uidgen);
+      new UIDGenerator(undefined, UIDGenerator.BASE16)
+        .should.deepEqual(new UIDGenerator(UIDGenerator.BASE16));
     });
 
     it('accepts a custom baseEncoding', () => {
       new UIDGenerator('123abc').baseEncoding.should.be.exactly('123abc');
       new UIDGenerator(512, 'abc123').baseEncoding.should.be.exactly('abc123');
-      new UIDGenerator('01', 9).baseEncoding.should.be.exactly('01');
     });
 
     it('throws if bitSize is not a positive integer that is a multiple of 8', () => {
@@ -82,6 +63,7 @@ describe('UIDGenerator', () => {
       should.throws(() => new UIDGenerator(1.5), TypeError);
       should.throws(() => new UIDGenerator(Math.PI), TypeError);
       should.throws(() => new UIDGenerator(Infinity), TypeError);
+      should.throws(() => new UIDGenerator(null), TypeError);
       should.throws(() => new UIDGenerator(true), TypeError);
       should.throws(() => new UIDGenerator({}), TypeError);
       should.throws(() => new UIDGenerator([]), TypeError);
@@ -89,7 +71,8 @@ describe('UIDGenerator', () => {
     });
 
     it('throws if baseEncoding is not a string', () => {
-      should.throws(() => new UIDGenerator(128, true), TypeError);
+      should.throws(() => new UIDGenerator(128, null), TypeError);
+      should.throws(() => new UIDGenerator(128, false), TypeError);
       should.throws(() => new UIDGenerator(128, 256), TypeError);
       should.throws(() => new UIDGenerator(128, {}), TypeError);
       should.throws(() => new UIDGenerator(128, []), TypeError);
@@ -106,25 +89,6 @@ describe('UIDGenerator', () => {
       should.throws(() => new UIDGenerator('01213'), Error);
     });
 
-    it('throws if uidLength is not a positive integer', () => {
-      should.throws(() => new UIDGenerator('01', 0), TypeError);
-      should.throws(() => new UIDGenerator('01', -1), TypeError);
-      should.throws(() => new UIDGenerator('01', -128), TypeError);
-      should.throws(() => new UIDGenerator('01', 1.5), TypeError);
-      should.throws(() => new UIDGenerator('01', Math.PI), TypeError);
-      should.throws(() => new UIDGenerator('01', Infinity), TypeError);
-      should.throws(() => new UIDGenerator('01', true), TypeError);
-      should.throws(() => new UIDGenerator('01', false), TypeError);
-      should.throws(() => new UIDGenerator('01', {}), TypeError);
-      should.throws(() => new UIDGenerator('01', []), TypeError);
-      should.throws(() => new UIDGenerator('01', /regex/), TypeError);
-    });
-
-    it('throws if both bitSize and uidLength are specified', () => {
-      should.throws(() => new UIDGenerator(24, 24), TypeError);
-      should.throws(() => new UIDGenerator(16, UIDGenerator.BASE16, 2), TypeError);
-    });
-
   });
 
 
@@ -133,7 +97,7 @@ describe('UIDGenerator', () => {
     it('is the same value as is passed to the constructor or calculated from uidLength', () => {
       new UIDGenerator().bitSize.should.be.exactly(128);
       new UIDGenerator(256).bitSize.should.be.exactly(256);
-      new UIDGenerator(null, 11).bitSize.should.be.exactly(65);
+      new UIDGenerator(8, '01').bitSize.should.be.exactly(8);
     });
 
   });
@@ -164,9 +128,7 @@ describe('UIDGenerator', () => {
 
   describe('#uidLength', () => {
 
-    it('is the same value as passed to the constructor or the calculated UID length', () => {
-      new UIDGenerator(null, 1).uidLength.should.be.exactly(1);
-      new UIDGenerator('abc', 10).uidLength.should.be.exactly(10);
+    it('is the correct, calculated UID length', () => {
       new UIDGenerator().uidLength.should.be.exactly(22);
       new UIDGenerator(256, UIDGenerator.BASE62).uidLength.should.be.exactly(43);
       new UIDGenerator(512, '01').uidLength.should.be.exactly(512);
@@ -212,23 +174,14 @@ describe('UIDGenerator', () => {
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
 
-      uidgen = new UIDGenerator(null, 20);
-      uid = uidgen.generateSync();
-      uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
-
       uidgen = new UIDGenerator(512, UIDGenerator.BASE62);
-      uid = uidgen.generateSync();
-      uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
-
-      uidgen = new UIDGenerator(UIDGenerator.BASE16, 20);
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
     });
 
     it('produces UIDs of the correct length even if crypto.randomBytes() returns a Buffer with leading zeros', () => {
-      const randomBytes = crypto.randomBytes;
-
       // Mock crypto.randomBytes
+      const randomBytes = crypto.randomBytes;
       crypto.randomBytes = function(size) {
         return Buffer.alloc(size, 1);
       };
@@ -245,7 +198,7 @@ describe('UIDGenerator', () => {
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
 
-      uidgen = new UIDGenerator('abc', 3);
+      uidgen = new UIDGenerator('abc');
       uid = uidgen.generateSync();
       uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
 
@@ -255,19 +208,14 @@ describe('UIDGenerator', () => {
         return buffer;
       };
 
-      uidgen = new UIDGenerator(null, 20);
-      uid = uidgen.generateSync();
-      uid.should.match(new RegExp('^[' + uidgen.baseEncoding + ']{' + uidgen.uidLength + '}$'));
-
-      // Restore crypto.randomBytes
-      crypto.randomBytes = randomBytes;
+      crypto.randomBytes = randomBytes; // Restore original
     });
 
     it('base-encodes UIDs in a standard fashion', () => {
-      const randomBytes = crypto.randomBytes;
       let buffer;
 
       // Mock crypto.randomBytes
+      const randomBytes = crypto.randomBytes;
       crypto.randomBytes = function(size) {
         return buffer = randomBytes(size);
       };
@@ -275,24 +223,17 @@ describe('UIDGenerator', () => {
       new UIDGenerator(UIDGenerator.BASE16).generateSync()
         .should.equal(buffer.toString('hex'));
 
-      // Test to ensure that the digits.length > this.uidLength path is hit
-      crypto.randomBytes = function(size) {
-        const buf = Buffer.allocUnsafe(size);
-        buf[0] = 3;
-        return buf;
-      };
+      new UIDGenerator(256, UIDGenerator.BASE16).generateSync()
+        .should.equal(buffer.toString('hex'));
 
-      new UIDGenerator('01', 1).generateSync().should.equal('1');
-
-      // Restore crypto.randomBytes
-      crypto.randomBytes = randomBytes;
+      crypto.randomBytes = randomBytes; // Restore original
     });
 
     it('correctly handles asynchronous errors', (done) => {
-      const randomBytes = crypto.randomBytes;
       const error = new Error('Fake error');
 
       // Mock crypto.randomBytes
+      const randomBytes = crypto.randomBytes;
       crypto.randomBytes = function(size, cb) {
         process.nextTick(() => {
           cb(error);
@@ -306,8 +247,7 @@ describe('UIDGenerator', () => {
         .then(() => {
           new UIDGenerator().generate((err) => {
             err.should.be.exactly(error);
-            // Restore crypto.randomBytes
-            crypto.randomBytes = randomBytes;
+            crypto.randomBytes = randomBytes; // Restore original
             done();
           });
         });

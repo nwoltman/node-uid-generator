@@ -5,20 +5,18 @@
 [![Coverage Status](https://coveralls.io/repos/github/nwoltman/node-uid-generator/badge.svg?branch=master)](https://coveralls.io/github/nwoltman/node-uid-generator?branch=master)
 [![devDependency Status](https://david-dm.org/nwoltman/node-uid-generator/dev-status.svg)](https://david-dm.org/nwoltman/node-uid-generator?type=dev)
 
-Generates cryptographically strong, pseudo-random UIDs with custom size and base-encoding. Generated UIDs are strings that are guaranteed to always be the same length depending on the specified [bit-size](#api). You may also specify the length of the UID to generate instead of specifying the number of bits.
+Generates cryptographically strong, pseudo-random UIDs with custom size and base-encoding. Generated UIDs are strings that are guaranteed to always be the same length depending on the specified [bit-size](#api).
 
 Great for generating things like compact API keys and UIDs that are safe to use in URLs and cookies.
 
-**Tip:** The main benefit of this module is the ability to generate human-safe UIDs (using [base58](#uidgeneratorbase58--string)) and large UIDs that are more compact (using something like [base94](#uidgeneratorbase94--string)). If you’re just looking to generate URL-safe base64 IDs, the best package for that is [`uid-safe`](https://github.com/crypto-utils/uid-safe).
+**Tip:** The main benefit of this module is the ability to easily generate human-safe UIDs (using [base58](#uidgeneratorbase58--string)) and large UIDs that are more compact (using something like [base94](#uidgeneratorbase94--string)). If you’re just looking to generate URL-safe base64 IDs, the best package for that is [`uid-safe`](https://github.com/crypto-utils/uid-safe).
 
 
 ## Installation
 
 ```sh
-# npm
 npm install uid-generator --save
-
-# yarn
+# or
 yarn add uid-generator
 ```
 
@@ -49,17 +47,16 @@ uidgen.generateSync(); // -> '8Vw3bgbMMzeYfrQHQ8p3Jr'
 
 ## API
 
-### new UIDGenerator([bitSize][, baseEncoding][, uidLength])
+### new UIDGenerator([bitSize][, baseEncoding])
 
 Creates a new `UIDGenerator` instance that generates `bitSize`-bit or `uidLength`-sized UIDs encoded using the characters in `baseEncoding`.
 
-| Param          | Type               | Default               | Description
-|----------------|--------------------|-----------------------|-------------
-| [bitSize]      | `number` \| `null` | `128`                 | The size of the UID to generate in bits. Must be a multiple of `8`.
-| [baseEncoding] | `string`           | `UIDGenerator.BASE58` | One of the `UIDGenerator.BASE##` constants or a custom string of characters to use to encode the UID. If a custom string is used, it must made of unique characters.
-| [uidLength]    | `number`           | `undefined`           | The length of the UID string to generate. An error is thrown if `uidLength` is specified and `bitSize` is specified and not `null`.
+| Param          | Type     | Default               | Description
+|----------------|--------- |-----------------------|-------------
+| [bitSize]      | `number` | `128`                 | The size of the UID to generate in bits. Must be a multiple of `8`.
+| [baseEncoding] | `string` | `UIDGenerator.BASE58` | One of the `UIDGenerator.BASE##` constants or a custom string of characters to use to encode the UID.
 
-**Note:** If you use a custom `baseEncoding` that has URL-unsafe characters, it is up to you to URL-encode the resulting UID.
+**Note:** If a custom `baseEncoding` that has URL-unsafe characters is used, it is up to you to URL-encode the resulting UID.
 
 **Example**
 
@@ -67,9 +64,7 @@ Creates a new `UIDGenerator` instance that generates `bitSize`-bit or `uidLength
 new UIDGenerator();
 new UIDGenerator(256);
 new UIDGenerator(UIDGenerator.BASE16);
-new UIDGenerator(null, 10);
 new UIDGenerator(512, UIDGenerator.BASE62);
-new UIDGenerator(UIDGenerator.BASE36, 10);
 new UIDGenerator('01'); // Custom encoding (base2)
 ```
 
@@ -146,8 +141,6 @@ bitSize = Math.ceil(length * Math.log2(base));
 ```js
 new UIDGenerator().bitSize // -> 128
 new UIDGenerator(256).bitSize // -> 256
-new UIDGenerator(null, 10).bitSize // -> 58
-new UIDGenerator(null, 11).bitSize // -> 64
 ```
 
 ---
@@ -166,7 +159,6 @@ uidLength = Math.ceil(bitSize / Math.log2(base))
 
 ```js
 new UIDGenerator().uidLength // -> 22
-new UIDGenerator(null, 10).uidLength // -> 10
 new UIDGenerator(256, UIDGenerator.BASE62).uidLength // -> 43
 ```
 

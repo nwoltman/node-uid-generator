@@ -3,47 +3,28 @@
 const crypto = require('crypto');
 
 class UIDGenerator {
-  constructor(bitSize, baseEncoding, uidLength) {
-    if (typeof bitSize === 'string') {
-      uidLength = baseEncoding;
+  constructor(bitSize, baseEncoding) {
+    if (bitSize === undefined) {
+      bitSize = 128;
+    } else if (typeof bitSize === 'string') {
       baseEncoding = bitSize;
-      bitSize = null;
-    } else if (typeof baseEncoding === 'number') {
-      uidLength = baseEncoding;
-      baseEncoding = null;
+      bitSize = 128;
+    } else if (!Number.isInteger(bitSize) || bitSize <= 0 || bitSize % 8 !== 0) {
+      throw new TypeError('bitSize must be a positive integer that is a multiple of 8');
     }
 
-    if (baseEncoding) {
-      validateBaseEncoding(baseEncoding);
-    } else {
+    if (baseEncoding === undefined) {
       baseEncoding = UIDGenerator.BASE58;
-    }
-
-    if (uidLength === undefined || uidLength === null) {
-      if (bitSize === undefined || bitSize === null) {
-        bitSize = 128;
-      } else if (!Number.isInteger(bitSize) || bitSize <= 0 || bitSize % 8 !== 0) {
-        throw new TypeError('bitSize must be a positive integer that is a multiple of 8');
-      }
-
-      uidLength = Math.ceil(bitSize / Math.log2(baseEncoding.length));
-      this._byteSize = bitSize / 8;
     } else {
-      if (bitSize !== undefined && bitSize !== null) {
-        throw new TypeError('uidLength may not be specified when bitSize is also specified');
-      }
-      if (!Number.isInteger(uidLength) || uidLength <= 0) {
-        throw new TypeError('uidLength must be a positive integer');
-      }
-
-      bitSize = Math.ceil(uidLength * Math.log2(baseEncoding.length));
-      this._byteSize = Math.ceil(bitSize / 8);
+      validateBaseEncoding(baseEncoding);
     }
 
-    this.uidLength = uidLength;
     this.bitSize = bitSize;
     this.baseEncoding = baseEncoding;
     this.base = baseEncoding.length;
+    this.uidLength = Math.ceil(bitSize / Math.log2(baseEncoding.length));
+
+    this._byteSize = bitSize / 8;
   }
 
   generate(cb) {
@@ -96,19 +77,11 @@ class UIDGenerator {
     }
 
     // Convert digits to a string
-    var str = '';
+    var str = digits.length < this.uidLength
+      ? this.baseEncoding[0].repeat(this.uidLength - digits.length) // Handle leading zeros
+      : '';
 
-    if (digits.length > this.uidLength) {
-      i = this.uidLength;
-    } else {
-      i = digits.length;
-
-      if (digits.length < this.uidLength) { // Handle leading zeros
-        str += this.baseEncoding[0].repeat(this.uidLength - digits.length);
-      }
-    }
-
-    while (i--) {
+    for (i = digits.length - 1; i >= 0; --i) {
       str += this.baseEncoding[digits[i]];
     }
 
