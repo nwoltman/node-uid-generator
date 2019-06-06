@@ -80,6 +80,11 @@ describe('UIDGenerator', () => {
       should.throws(() => new UIDGenerator(128, new Date()), TypeError);
     });
 
+    it('throws if baseEncoding is too short', () => {
+      should.throws(() => new UIDGenerator(''), Error);
+      should.throws(() => new UIDGenerator('1'), Error);
+    });
+
     it('throws if baseEncoding contains non-unique characters', () => {
       should.throws(() => new UIDGenerator('11'), Error);
       should.throws(() => new UIDGenerator('011'), Error);

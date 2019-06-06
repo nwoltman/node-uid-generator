@@ -101,7 +101,12 @@ function validateBaseEncoding(baseEncoding) {
     case UIDGenerator.BASE62:
     case UIDGenerator.BASE66:
     case UIDGenerator.BASE71:
+    case UIDGenerator.BASE94:
       return;
+  }
+
+  if (baseEncoding.length < 2) {
+    throw new Error('baseEncoding must have 2 or more characters');
   }
 
   for (var i = 0; i < baseEncoding.length - 1; i++) {
