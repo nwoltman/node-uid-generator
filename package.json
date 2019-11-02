@@ -2,6 +2,8 @@
   "name": "uid-generator",
   "version": "2.0.0",
   "description": "Generates cryptographically strong pseudo-random UIDs with custom size and base-encoding",
+  "author": "Nathan Woltman <nwoltman@outlook.com>",
+  "license": "MIT",
   "main": "index.js",
   "files": [
     "index.js"
@@ -9,10 +11,9 @@
   "engines": {
     "node": ">=4"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nwoltman/node-uid-generator.git"
-  },
+  "repository": "github:nwoltman/node-uid-generator",
+  "homepage": "https://github.com/nwoltman/node-uid-generator",
+  "bugs": "https://github.com/nwoltman/node-uid-generator/issues",
   "keywords": [
     "uid",
     "generator",
@@ -24,23 +25,27 @@
     "base",
     "encoding"
   ],
-  "author": "Nathan Woltman <nwoltman@outlook.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nwoltman/node-uid-generator/issues"
+  "nyc": {
+    "reporter": [
+      "html",
+      "text-summary"
+    ],
+    "check-coverage": true,
+    "branches": 100,
+    "lines": 100,
+    "statements": 100
   },
-  "homepage": "https://github.com/nwoltman/node-uid-generator",
   "devDependencies": {
-    "@nwoltman/eslint-config": "~0.2.1",
-    "coveralls": "^3.0.4",
-    "eslint": "^5.16.0",
-    "mocha": "^6.1.4",
+    "@nwoltman/eslint-config": "~0.5.1",
+    "coveralls": "^3.0.7",
+    "eslint": "^6.6.0",
+    "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "should": "^13.2.3"
   },
   "scripts": {
     "lint": "eslint index.js test/*.js",
-    "test": "eslint index.js test/*.js && nyc --reporter=html --reporter=text-summary mocha",
+    "test": "eslint index.js test/*.js && nyc mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   }
 }
