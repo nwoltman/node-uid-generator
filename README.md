@@ -15,7 +15,7 @@ Great for generating things like compact API keys and UIDs that are safe to use 
 ## Installation
 
 ```sh
-npm install uid-generator --save
+npm install uid-generator
 # or
 yarn add uid-generator
 ```
